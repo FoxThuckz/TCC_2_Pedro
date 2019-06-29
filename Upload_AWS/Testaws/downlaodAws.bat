@@ -1,0 +1,1 @@
+aws s3 sync s3://thuckz-android C:\Users\pedri\Desktop\Testaws --exclude "*" --include "*.3gp"
