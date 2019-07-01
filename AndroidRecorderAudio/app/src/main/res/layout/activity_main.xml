@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="Gravando a voz"
+        android:textSize="35sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="Área de gravação"
+        android:textSize="24sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_width="400dp"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btnStartRecord"
+                android:layout_width="180dp"
+                android:layout_height="120dp"
+                android:drawableTop="@drawable/mic1"
+                android:gravity="center"
+                android:text="Gravar" />
+            android:text="" />
+
+            <Button
+                android:id="@+id/btnStopRecord"
+                android:layout_width="180dp"
+                android:layout_height="120dp"
+                android:drawableTop="@drawable/mic2"
+                android:gravity="center"
+                android:text="Parar de Gravar" />
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="Área de Reprodução"
+        android:textSize="24sp" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="180dp"
+            android:layout_height="120dp"
+            android:drawableTop="@drawable/play"
+            android:gravity="center"
+            android:text="Reproduzir" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="180dp"
+            android:layout_height="120dp"
+            android:drawableTop="@drawable/pause"
+            android:gravity="center"
+            android:text="Parar Reprodução" />
+
+    </TableRow>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="Enviando dados"
+        android:textSize="24sp" />
+    <Button
+        android:id="@+id/btnEnviar"
+        android:layout_width="360dp"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/up"
+        android:onClick="enviarArquivo"
+        android:text="Enviar Nuvem" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:gravity="center"
+        android:text="Frequência Fundamental"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/btnPith"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="download"
+        android:text="Pith" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="173dp"
+        android:text="TextView"
+        />
+
+</LinearLayout>

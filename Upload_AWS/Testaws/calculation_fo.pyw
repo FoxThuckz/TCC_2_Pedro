@@ -392,7 +392,7 @@ def get_F_0(signal, rate, time_step=0.0, min_pitch=75, max_pitch=600,
         return [np.median(1.0 / f_0)]
 
 while 1:
-    p = Popen("downlaodAws.bat", cwd=r"C:\Users\pedri\Desktop\Testaws")
+    p = Popen("downlaodAws.bat", cwd=r"C:\dev\TCC_2_Pedro\TCC_2_Pedro\Upload_AWS\Testaws")
     stdout, stderr = p.communicate()
 
     # files                                                                         
@@ -416,6 +416,6 @@ while 1:
     arquivo.write(frequ_o)
     arquivo.close()
 
-    p = Popen("clearAws.bat", cwd=r"C:\Users\pedri\Desktop\Testaws")
+    p = Popen("clearAws.bat", cwd=r"C:\dev\TCC_2_Pedro\TCC_2_Pedro\Upload_AWS\Testaws")
     stdout, stderr = p.communicate()
 
