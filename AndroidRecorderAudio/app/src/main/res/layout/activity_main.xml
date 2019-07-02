@@ -38,7 +38,7 @@
                 android:layout_height="120dp"
                 android:drawableTop="@drawable/mic1"
                 android:gravity="center"
-                android:text="Gravar" />
+                android:text="Gravar1" />
             android:text="" />
 
             <Button

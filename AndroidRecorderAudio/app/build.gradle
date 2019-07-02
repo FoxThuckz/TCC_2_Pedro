@@ -32,5 +32,9 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-s3:2.7.+'
     implementation 'com.amazonaws:aws-android-sdk-cognito:2.7.+'
     implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.7.+@aar') { transitive = true }
+    implementation 'com.amazonaws:aws-android-sdk-core:2.2.13'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.2.13'
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.2.13'
+    implementation 'com.amazonaws:aws-android-sdk-ddb:2.2.13'
 
 }

@@ -55,13 +55,13 @@ public class MainActivity<var> extends AppCompatActivity {
         transferObserver.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
-              if(state == TransferState.COMPLETED) {
-                  Toast.makeText(MainActivity.this, "Arquivo foi enviado com Sucesso!", Toast.LENGTH_SHORT).show();
-              }
-                  else
-                  Toast.makeText(MainActivity.this, "Não carregou na nuvem", Toast.LENGTH_SHORT).show();
-              }
-              @Override
+                if(state == TransferState.COMPLETED) {
+                    Toast.makeText(MainActivity.this, "Arquivo foi enviado com Sucesso!", Toast.LENGTH_SHORT).show();
+                }
+                else
+                    Toast.makeText(MainActivity.this, " ", Toast.LENGTH_SHORT).show();
+            }
+            @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
             }
             @Override
@@ -72,10 +72,9 @@ public class MainActivity<var> extends AppCompatActivity {
         });
     }
 
-   public void download(View v) throws IOException
+    public void download(View v) throws IOException
     {
-        File sdcard = Environment.getExternalStorageDirectory();
-        File file = new File(sdcard, "freq_o.txt");
+        File downloadFromS3 = new File("/storage/files/freq_o.txt");
 
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
@@ -85,8 +84,8 @@ public class MainActivity<var> extends AppCompatActivity {
         AmazonS3 s3= new AmazonS3Client(credentialsProvider);
         s3.setRegion(Region.getRegion(Regions.SA_EAST_1));
         TransferUtility transferUtility = new TransferUtility(s3, this);
-        TransferObserver transferObserver  = transferUtility.download("thuckz-android", "freq_o.txt", file);
-        Toast.makeText(MainActivity.this, "Downlaond...", Toast.LENGTH_SHORT).show();
+        TransferObserver transferObserver  =transferUtility.download("thuckz-android","freq_o.txt",downloadFromS3 );
+        //.makeText(MainActivity.this, "Downlaond...", Toast.LENGTH_SHORT).show();
         transferObserver.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
@@ -101,7 +100,7 @@ public class MainActivity<var> extends AppCompatActivity {
             }
             @Override
             public void onError(int id, Exception ex) {
-                Log.e("fox.mp3","Erro" + ex.getMessage());
+                Log.e("freq_o.txt","Erro" + ex.getMessage());
 
             }
         });
@@ -112,8 +111,6 @@ public class MainActivity<var> extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         if (!checkPermissionFromDevice())
             requestPermissions();
@@ -126,11 +123,11 @@ public class MainActivity<var> extends AppCompatActivity {
         btnPith = (Button) findViewById(R.id.btnPith);
 
 
-            btnRecord.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    if (checkPermissionFromDevice()) {
+                if (checkPermissionFromDevice()) {
 
                     pathSave = Environment.getExternalStorageDirectory()
                             .getAbsolutePath() + "/fox.mp3";
@@ -148,62 +145,59 @@ public class MainActivity<var> extends AppCompatActivity {
 
                 }
                 else{
-                        requestPermissions();
-                    }
-                    }
+                    requestPermissions();
+                }
+            }
 
-                });
+        });
 
-            btnStopRecord.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mediaRecorder.stop();
-                    btnStopRecord.setEnabled(true);
-                    btnRecord.setEnabled(true);
-                    btnPlay.setEnabled(true);
-                    btnStop.setEnabled(false);
+        btnStopRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaRecorder.stop();
+                btnStopRecord.setEnabled(true);
+                btnRecord.setEnabled(true);
+                btnPlay.setEnabled(true);
+                btnStop.setEnabled(false);
+
+            }
+        });
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnStop.setEnabled(true);
+                btnStopRecord.setEnabled(false);
+                btnRecord.setEnabled(false);
+
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(pathSave);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mediaPlayer.start();
+                Toast.makeText(MainActivity.this, "Playing...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnStopRecord.setEnabled(true);
+                btnRecord.setEnabled(true);
+                btnStop.setEnabled(false);
+                btnPlay.setEnabled(true);
+
+                if(mediaPlayer != null)
+                {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    setupMediaRecorder();
 
                 }
-            });
-            btnPlay.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    btnStop.setEnabled(true);
-                    btnStopRecord.setEnabled(false);
-                    btnRecord.setEnabled(false);
-
-                    mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(pathSave);
-                        mediaPlayer.prepare();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    mediaPlayer.start();
-                    Toast.makeText(MainActivity.this, "Playing...", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            btnStop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    btnStopRecord.setEnabled(true);
-                    btnRecord.setEnabled(true);
-                    btnStop.setEnabled(false);
-                    btnPlay.setEnabled(true);
-
-                    if(mediaPlayer != null)
-                    {
-                        mediaPlayer.stop();
-                        mediaPlayer.release();
-                        setupMediaRecorder();
-
-                    }
-                }
-            });
-
-
-
+            }
+        });
     }
 
     private void setupMediaRecorder() {
@@ -216,6 +210,7 @@ public class MainActivity<var> extends AppCompatActivity {
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this,new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO
         },REQUEST_PERMISSION_CODE);
@@ -238,10 +233,10 @@ public class MainActivity<var> extends AppCompatActivity {
     }
 
     private boolean checkPermissionFromDevice() {
+        int read_external_storege_result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         int write_external_storege_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int record_audio_result = ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO);
         return write_external_storege_result == PackageManager.PERMISSION_GRANTED &&
-                record_audio_result == PackageManager.PERMISSION_GRANTED;
+                record_audio_result == PackageManager.PERMISSION_GRANTED && read_external_storege_result == PackageManager.PERMISSION_GRANTED;
     }
 }
-

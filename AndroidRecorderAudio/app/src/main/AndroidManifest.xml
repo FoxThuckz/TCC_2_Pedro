@@ -4,11 +4,14 @@
     package="com.example.pedri.androidrecorderaudio">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACTION_DOWN"/>
+    <uses-permission android:name="android.permission.SMARTBONDING_FEATURE_ENABLED" />
 
     <application
         android:debuggable="true"
