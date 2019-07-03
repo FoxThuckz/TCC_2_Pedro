@@ -94,7 +94,7 @@
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:drawableTop="@drawable/up"
-        android:onClick="enviarArquivo"
+        android:onClick="upload"
         android:text="Enviar Nuvem" />
 
     <TextView

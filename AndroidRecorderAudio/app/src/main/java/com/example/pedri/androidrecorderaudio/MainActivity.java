@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -39,9 +40,9 @@ public class MainActivity<var> extends AppCompatActivity {
 
     final int REQUEST_PERMISSION_CODE = 1000;
 
-    public void enviarArquivo(View v){
+    public void upload(View v){
         File sdcard = Environment.getExternalStorageDirectory();
-        File file = new File(sdcard, "fox.mp3");
+        File file = new File(sdcard, "fox.3gp");
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
                 "us-east-2:0894d067-ddc1-42c8-98e8-59ac18f84a7c", // Identity pool ID
@@ -51,7 +52,7 @@ public class MainActivity<var> extends AppCompatActivity {
         s3.setRegion(Region.getRegion(Regions.SA_EAST_1));
         TransferUtility transferUtility = new TransferUtility(s3, this);
         TransferObserver transferObserver =
-                transferUtility.upload("thuckz-android", "fox.mp3",file);
+                transferUtility.upload("thuckz-android", "fox.3gp",file);
         transferObserver.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
@@ -66,7 +67,7 @@ public class MainActivity<var> extends AppCompatActivity {
             }
             @Override
             public void onError(int id, Exception ex) {
-                Log.e("fox.mp3","Erro" + ex.getMessage());
+                Log.e("fox.3gp","Erro" + ex.getMessage());
 
             }
         });
@@ -74,7 +75,8 @@ public class MainActivity<var> extends AppCompatActivity {
 
     public void download(View v) throws IOException
     {
-        File downloadFromS3 = new File("/storage/files/freq_o.txt");
+        File downloadFromS3 = new File("/sdcard/freq_o.txt");
+
 
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
@@ -84,7 +86,9 @@ public class MainActivity<var> extends AppCompatActivity {
         AmazonS3 s3= new AmazonS3Client(credentialsProvider);
         s3.setRegion(Region.getRegion(Regions.SA_EAST_1));
         TransferUtility transferUtility = new TransferUtility(s3, this);
-        TransferObserver transferObserver  =transferUtility.download("thuckz-android","freq_o.txt",downloadFromS3 );
+
+        TransferObserver transferObserver = transferUtility.download("thuckz-android", "freq_o.txt", downloadFromS3);
+
         //.makeText(MainActivity.this, "Downlaond...", Toast.LENGTH_SHORT).show();
         transferObserver.setTransferListener(new TransferListener() {
             @Override
@@ -130,7 +134,7 @@ public class MainActivity<var> extends AppCompatActivity {
                 if (checkPermissionFromDevice()) {
 
                     pathSave = Environment.getExternalStorageDirectory()
-                            .getAbsolutePath() + "/fox.mp3";
+                            .getAbsolutePath() + "/fox.3gp";
                     setupMediaRecorder();
                     try {
                         mediaRecorder.prepare();
@@ -203,7 +207,7 @@ public class MainActivity<var> extends AppCompatActivity {
     private void setupMediaRecorder() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mediaRecorder.setOutputFile(pathSave);
     }

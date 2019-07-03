@@ -1,1 +1,1 @@
-aws s3 sync s3://thuckz-android C:\Users\pedri\Desktop\Testaws --exclude "*" --include "*.3gp"
+aws s3 sync s3://thuckz-android C:\Users\pedri\Desktop\Upload_AWS\Testaws --exclude "*" --include "*.3gp"
