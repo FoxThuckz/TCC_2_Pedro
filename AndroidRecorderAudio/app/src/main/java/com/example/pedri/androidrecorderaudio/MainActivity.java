@@ -1,6 +1,7 @@
 package com.example.pedri.androidrecorderaudio;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -13,9 +14,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.amazonaws.AmazonServiceException;
+import android.widget.Toast;
+import android.widget.*;
+
+import java.io.BufferedReader;
+import java.io.File;
+
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -26,19 +31,25 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
-import java.io.File;
+import org.w3c.dom.Text;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MainActivity<var> extends AppCompatActivity {
 
     //Declarando as vaiavéis
-    Button btnRecord, btnStopRecord, btnPlay, btnStop, btnEnviar, btnPith;
+    Button btnRecord, btnStopRecord, btnPlay, btnStop, btnEnviar,bntApp;
     String pathSave = "";
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
-
-
+    TextView text;
+    final String FILENAME = "freq_o.txt";
     final int REQUEST_PERMISSION_CODE = 1000;
+
 
     public void upload(View v){
         File sdcard = Environment.getExternalStorageDirectory();
@@ -72,11 +83,8 @@ public class MainActivity<var> extends AppCompatActivity {
             }
         });
     }
-
-    public void download(View v) throws IOException
-    {
+    public void download(View v) throws IOException {
         File downloadFromS3 = new File("/sdcard/freq_o.txt");
-
 
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
@@ -88,13 +96,11 @@ public class MainActivity<var> extends AppCompatActivity {
         TransferUtility transferUtility = new TransferUtility(s3, this);
 
         TransferObserver transferObserver = transferUtility.download("thuckz-android", "freq_o.txt", downloadFromS3);
-
-        //.makeText(MainActivity.this, "Downlaond...", Toast.LENGTH_SHORT).show();
         transferObserver.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
                 if(state == TransferState.COMPLETED) {
-                    Toast.makeText(MainActivity.this, "Downlaond Completed...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Download Completed", Toast.LENGTH_SHORT).show();
                 }
                 else
                     Toast.makeText(MainActivity.this, "Failed..", Toast.LENGTH_SHORT).show();
@@ -105,13 +111,10 @@ public class MainActivity<var> extends AppCompatActivity {
             @Override
             public void onError(int id, Exception ex) {
                 Log.e("freq_o.txt","Erro" + ex.getMessage());
-
             }
         });
 
     }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -119,13 +122,13 @@ public class MainActivity<var> extends AppCompatActivity {
         if (!checkPermissionFromDevice())
             requestPermissions();
 
+        text = findViewById(R.id.text);
         btnEnviar = (Button) findViewById(R.id.btnEnviar);
         btnPlay = (Button) findViewById(R.id.btnPlay);
         btnRecord = (Button) findViewById(R.id.btnStartRecord);
         btnStop = (Button) findViewById(R.id.btnStop);
         btnStopRecord = (Button) findViewById(R.id.btnStopRecord);
-        btnPith = (Button) findViewById(R.id.btnPith);
-
+        bntApp = (Button) findViewById(R.id.bntApp);
 
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +206,40 @@ public class MainActivity<var> extends AppCompatActivity {
             }
         });
     }
+    public void readFile(View v){
+        if(isExternalStorageReadable()){
+            StringBuilder sb = new StringBuilder();
+            try{
+                File textFile = new File(Environment.getExternalStorageDirectory(), FILENAME);
+                FileInputStream fis = new FileInputStream(textFile);
 
+                if(fis != null){
+                    InputStreamReader isr = new InputStreamReader(fis);
+                    BufferedReader buff = new BufferedReader(isr);
+
+                    String line = null;
+                    while((line = buff.readLine()) != null){
+                        sb.append(line + "\n");
+                    }
+                    fis.close();
+                }
+                text.setText(sb);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }else{
+            Toast.makeText(this, "Cannot Read from External Storage.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private boolean isExternalStorageReadable() {
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || Environment.MEDIA_MOUNTED_READ_ONLY.equals(Environment.getExternalStorageState())) {
+            Log.i("State", "Yes, it is readable!");
+            return true;
+        } else {
+            return false;
+        }
+    }
     private void setupMediaRecorder() {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -211,7 +247,6 @@ public class MainActivity<var> extends AppCompatActivity {
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mediaRecorder.setOutputFile(pathSave);
     }
-
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this,new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -220,7 +255,6 @@ public class MainActivity<var> extends AppCompatActivity {
         },REQUEST_PERMISSION_CODE);
 
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode)
@@ -235,7 +269,6 @@ public class MainActivity<var> extends AppCompatActivity {
             break;
         }
     }
-
     private boolean checkPermissionFromDevice() {
         int read_external_storege_result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         int write_external_storege_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
